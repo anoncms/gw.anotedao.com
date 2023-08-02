@@ -3,58 +3,43 @@ import { AnoteAbi } from './anoteabi';
 import { ethers, parseEther } from "ethers";
 import $ from "jquery";
 
-// const sdk = new MetaMaskSDK();
-
-// const ethereum = sdk.getProvider();
-
-const contractAddress = "0xc2952c27f78C5616bf4eeE1EA40E9dFb3fA1e900";
+const contractAddress = '0xae60E1a4eF26671807411368Cc150631eF1456Fd';
 
 const start = async () => {
-  // const accounts = await ethereum.request({
-  //   method: 'eth_requestAccounts',
-  //   params: [],
-  // });
+  if (window.ethereum !== undefined) {
+    const accounts = await window.ethereum.request({
+      method: 'eth_requestAccounts',
+      params: [],
+    });
+    
+    let signer = null;
+    let provider;
 
-  let signer = null;
+    provider = new ethers.BrowserProvider(window.ethereum)
+    signer = await provider.getSigner();
 
-  let provider;
-  if (window.ethereum == null) {
+    const contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
+    contract.connect(provider);
 
-      // If MetaMask is not installed, we use the default provider,
-      // which is backed by a variety of third-party services (such
-      // as INFURA). They do not have private keys installed so are
-      // only have read-only access
-      // console.log("MetaMask not installed; using read-only defaults");
-      // provider = ethers.getDefaultProvider();
+    // var tx = await contract.deposit("fdsafsdafdsa", 100000000);
 
-  } else {
+    // await tx.wait()
 
-      // Connect to the MetaMask EIP-1193 object. This is a standard
-      // protocol that allows Ethers access to make all read-only
-      // requests through MetaMask.
-      provider = new ethers.BrowserProvider(window.ethereum)
+    // const options = {value: parseEther("0.001")};
 
-      // It also provides an opportunity to request access to write
-      // operations, which will be performed by the private key
-      // that MetaMask manages for the user.
-      signer = await provider.getSigner();
+    // var tx = await contract.withdraw(options);
+    // await tx.wait();
 
-      const contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
-      // contract.connect(provider);
-
-      // var tx = await contract.deposit("fdsafsdafdsa", 100000000);
-
-      // await tx.wait()
-
-      const options = {value: parseEther("0.001")};
-
-      var tx = await contract.withdraw(options);
-      await tx.wait();
-
-      console.log(tx);
-  
+    if (accounts != null) {
+      var we = await contract.withdrawExists(accounts[0]);
+      if (we) {
+        $("#wbtn").removeClass("btn-secondary");
+        $("#wbtn").addClass("btn-success");
+      } else {
+        $("#nowe").fadeIn();
+      }
+    }
   }
-  
 };
 
 // start();
@@ -66,5 +51,6 @@ if (window.ethereum == null || window.ethereum == undefined) {
 } else {
   $("#loading").fadeOut(function() {
     $("#success").fadeIn();
+    start();
   });
 }
