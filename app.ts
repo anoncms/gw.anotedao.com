@@ -15,7 +15,7 @@ const start = async () => {
     let signer = null;
     let provider;
 
-    provider = new ethers.BrowserProvider(window.ethereum)
+    provider = new ethers.providers.Web3Provider(window.ethereum)
     signer = await provider.getSigner();
 
     const contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
