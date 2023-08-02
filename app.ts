@@ -1,42 +1,48 @@
-import { MetaMaskSDK } from '@metamask/sdk';
+// import { MetaMaskSDK } from '@metamask/sdk';
 import { AnoteAbi } from './anoteabi';
-import { ethers, parseEther } from 'ethers';
+import { ethers } from 'ethers';
+import { ExternalProvider } from "@ethersproject/providers";
 import $ from 'jquery';
 
-const contractAddress = '0xae60E1a4eF26671807411368Cc150631eF1456Fd';
+const contractAddress = '0xbad04e33cc88bbcccc1b7adb8319f7d36f5bc472';
+
+let signer;
+let provider;
+let contract;
+
+declare global {
+  interface Window {
+    ethereum?: ExternalProvider;
+  }
+}
 
 const start = async () => {
-  if (window.ethereum !== undefined) {
+  if (window.ethereum !== undefined && window.ethereum.request !== undefined) {
     const accounts = await window.ethereum.request({
       method: 'eth_requestAccounts',
       params: [],
     });
-    
-    let signer = null;
-    let provider;
 
     provider = new ethers.providers.Web3Provider(window.ethereum)
     signer = await provider.getSigner();
 
-    const contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
-    contract.connect(provider);
-
-    // var tx = await contract.deposit("fdsafsdafdsa", 100000000);
-
-    // await tx.wait()
-
-    // const options = {value: parseEther("0.001")};
-
-    // var tx = await contract.withdraw(options);
-    // await tx.wait();
-
-    if (accounts != null) {
-      var we = await contract.withdrawExists(accounts[0]);
-      if (we) {
-        $("#wbtn").removeClass("btn-secondary");
-        $("#wbtn").addClass("btn-success");
-      } else {
-        $("#nowe").fadeIn();
+    if (signer != null) {
+      contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
+      contract.connect(provider);
+  
+      // var tx = await contract.deposit("fdsafsdafdsa", 100000000);
+  
+      // await tx.wait()
+  
+      if (accounts != null) {
+        var we = await contract.withdrawExists(accounts[0]);
+        if (we) {
+          $("#wbtn").removeClass("btn-secondary");
+          $("#wbtn").addClass("btn-success");
+          $("#wbtn").prop("disabled", false);
+        } else {
+          $("#nowe").fadeIn();
+        }
       }
     }
   }
@@ -52,3 +58,13 @@ if (window.ethereum == null || window.ethereum == undefined) {
     start();
   });
 }
+
+$("#wbtn").on("click", async function() {
+  $("#success").fadeOut(function() {
+    $("#loading").fadeIn();
+  });
+  const options = {value: ethers.utils.parseEther("0.001")};
+  var tx = await contract.withdraw(options);
+  await tx.wait();
+  console.log(tx);
+});
