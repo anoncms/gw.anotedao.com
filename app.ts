@@ -1,7 +1,7 @@
 import { MetaMaskSDK } from '@metamask/sdk';
 import { AnoteAbi } from './anoteabi';
-import { ethers, parseEther } from "ethers";
-import $ from "jquery";
+import { ethers, parseEther } from 'ethers';
+import $ from 'jquery';
 
 const contractAddress = '0xae60E1a4eF26671807411368Cc150631eF1456Fd';
 
