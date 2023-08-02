@@ -42,8 +42,6 @@ const start = async () => {
   }
 };
 
-// start();
-
 if (window.ethereum == null || window.ethereum == undefined) {
   $("#loading").fadeOut(function() {
     $("#error").fadeIn();
