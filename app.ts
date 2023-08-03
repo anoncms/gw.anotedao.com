@@ -57,6 +57,9 @@ if (window.ethereum == null || window.ethereum == undefined) {
 }
 
 $("#wbtn").on("click", async function() {
+    $("#errMsg").fadeOut(function() {
+        $("#errMsg").html('');
+    });
     $("#success").fadeOut(async function() {
         $("#loading").fadeIn();
 
@@ -79,6 +82,9 @@ $("#wbtn").on("click", async function() {
 });
 
 $("#dbtn").on("click", async function() {
+    $("#errMsg").fadeOut(function() {
+        $("#errMsg").html('');
+    });
     var address = $("#address").val();
     var amount = $("#amount").val();
 
