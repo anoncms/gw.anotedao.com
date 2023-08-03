@@ -4,8 +4,8 @@ import { ethers } from 'ethers';
 import { ExternalProvider } from "@ethersproject/providers";
 import $ from 'jquery';
 
-const contractAddress = '0xbad04e33cc88bbcccc1b7adb8319f7d36f5bc472';
-// const contractAddress = '0xae60E1a4eF26671807411368Cc150631eF1456Fd';
+// const contractAddress = '0xbad04e33cc88bbcccc1b7adb8319f7d36f5bc472';
+const contractAddress = '0xae60E1a4eF26671807411368Cc150631eF1456Fd';
 
 let signer;
 let provider;
@@ -57,22 +57,25 @@ if (window.ethereum == null || window.ethereum == undefined) {
 }
 
 $("#wbtn").on("click", async function() {
-    $("#success").fadeOut(function() {
+    $("#success").fadeOut(async function() {
         $("#loading").fadeIn();
+
+        const options = {value: ethers.utils.parseEther("0.001")};
+        try {
+            var tx = await contract.withdraw(options);
+            var r = await tx.wait();
+            $("#loading").fadeOut(function() {
+                $("#success").fadeIn();
+            });
+        } catch (e: any) {
+            console.log(e);
+            $("#errMsg").html(e.message);
+            $("#errMsg").show();
+            $("#loading").fadeOut(function() {
+                $("#success").fadeIn();
+            });
+        }
     });
-    const options = {value: ethers.utils.parseEther("0.001")};
-    try {
-        var tx = await contract.withdraw(options);
-        var r = await tx.wait();
-        $("#loading").fadeOut(function() {
-            $("#success").fadeIn();
-        });
-    } catch (e) {
-        console.log(e);
-        $("#loading").fadeOut(function() {
-            $("#success").fadeIn();
-        });
-    }
 });
 
 $("#dbtn").on("click", async function() {
@@ -91,8 +94,10 @@ $("#dbtn").on("click", async function() {
                     amount = Math.floor(parseFloat(amount?.toString()) * 100000000);
                     var tx = await contract.deposit(address, amount);
                     await tx.wait()
-                } catch (e) {
+                } catch (e: any) {
                     console.log(e);
+                    $("#errMsg").html(e.message);
+                    $("#errMsg").show();
                 }
         
                 $("#address").val('');
