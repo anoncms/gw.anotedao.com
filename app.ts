@@ -24,6 +24,9 @@ const start = async () => {
             params: [],
         });
 
+        provider = new ethers.providers.Web3Provider(window.ethereum)
+        signer = await provider.getSigner();
+
         const { chainId } = await provider.getNetwork();
         if (chainId != 56) {
             await window.ethereum.request({
@@ -42,9 +45,6 @@ const start = async () => {
             });
             window.location.href = "./";
         }
-
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-        signer = await provider.getSigner();
 
         if (signer != null) {
             contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
