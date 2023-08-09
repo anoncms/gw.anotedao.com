@@ -27,6 +27,24 @@ const start = async () => {
         provider = new ethers.providers.Web3Provider(window.ethereum)
         signer = await provider.getSigner();
 
+        const { chainId } = await provider.getNetwork();
+        if (chainId != 56) {
+            window.ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [{
+                    chainId: "0x38",
+                    rpcUrls: ["https://bsc-dataseed.binance.org"],
+                    chainName: "BSC Mainnet",
+                    nativeCurrency: {
+                        name: "BNB",
+                        symbol: "BNB",
+                        decimals: 18
+                    },
+                    blockExplorerUrls: ["https://bscscan.com"]
+                }]
+            });
+        }
+
         if (signer != null) {
             contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
             contract.connect(provider);
