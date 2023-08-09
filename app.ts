@@ -24,12 +24,9 @@ const start = async () => {
             params: [],
         });
 
-        provider = new ethers.providers.Web3Provider(window.ethereum)
-        signer = await provider.getSigner();
-
         const { chainId } = await provider.getNetwork();
         if (chainId != 56) {
-            window.ethereum.request({
+            await window.ethereum.request({
                 method: "wallet_addEthereumChain",
                 params: [{
                     chainId: "0x38",
@@ -43,7 +40,11 @@ const start = async () => {
                     blockExplorerUrls: ["https://bscscan.com"]
                 }]
             });
+            window.location.href = "./";
         }
+
+        provider = new ethers.providers.Web3Provider(window.ethereum)
+        signer = await provider.getSigner();
 
         if (signer != null) {
             contract = new ethers.Contract(contractAddress, AnoteAbi, signer);
